@@ -3,7 +3,7 @@ from twscrape import API, gather
 from twscrape.logger import set_log_level
 from typing import List
 
-from .config import LIMIT
+from .config import LIMIT, ACCOUNT_DB_PATH
 
 async def get_profile(api:API, user_id:str, limit:int=20):
     followers = await gather(api.followers(user_id, limit=limit))  # list[User]
@@ -17,11 +17,9 @@ async def get_profile(api:API, user_id:str, limit:int=20):
     )
 
 async def run(users: List, limit:int=LIMIT):
-    api = API()  # or API("path-to.db") - default is `accounts.db`
+    api = API(ACCOUNT_DB_PATH)  # or API("path-to.db") - default is `accounts.db`
 
-    # ADD ACCOUNTS (for CLI usage see BELOW)
-    await api.pool.add_account("nooneknowme4412", "Minh622002", "minhchool@gmail.com", "yqkuxudwvsoulwzn")
-    await api.pool.add_account("GUNDbit_01", "Minh622002", "minh.mecury06@gmail.com", "xbyzrfosoushrjad")
+    # LOGIN ACCOUNTS (for CLI usage see BELOW)
     await api.pool.login_all()
 
     # change log level, default info
