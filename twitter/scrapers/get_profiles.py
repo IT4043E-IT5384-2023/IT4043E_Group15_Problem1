@@ -5,11 +5,25 @@ from typing import List
 from .config import *
 
 async def get_profile(api:API, user_id:str, limit:int=20):
-    followers = await gather(api.followers(user_id, limit=limit))  # list[User]
-    following = await gather(api.following(user_id, limit=limit))  # list[User]
-    tweets = await gather(api.user_tweets(user_id, limit=limit))  # list[Tweet]
+    try:
+        user = await api.user_by_id(user_id)
+    except:
+        user = {}
+    try:
+        followers = await gather(api.followers(user_id, limit=limit))
+    except:
+        followers = []
+    try:
+        following = await gather(api.following(user_id, limit=limit))
+    except:
+        following = []
+    try:
+        tweets = await gather(api.user_tweets(user_id, limit=limit))
+    except:
+        tweets = []
 
     return user_id, dict(
+        user=user,
         follower=followers,
         following=following,
         tweet=tweets
