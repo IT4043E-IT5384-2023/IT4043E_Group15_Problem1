@@ -24,7 +24,7 @@ def add_profiles(profiles:Dict, cur_idx, path:str=PROFILE_PATH):
 def update_log(cur_idx, path:str=LOG_PATH):
     with open(path, 'r+') as f:
         log = json.load(f)
-        log["cursor_idx"] = cur_idx + BATCH_SIZE
+        log["cursor_idx"] = cur_idx
         f.seek(0)
         json.dump(log, f, ensure_ascii=False, indent=4)
 
@@ -39,7 +39,13 @@ async def main(keywords:str=KEYWORDS, n_tweets:int=N_TWEETS, limit:int=LIMIT):
     save_uids(uids)
 
     # Scrape profiles
-    for i in range(0, len(uids), BATCH_SIZE):
+    i = 0
+    while i+BATCH_SIZE <= len(uids):
         profiles = await get_profiles(api, uids[i:i+BATCH_SIZE], limit)
         add_profiles(profiles, i, UID_PATH)
         update_log(i+BATCH_SIZE, LOG_PATH)
+        i += BATCH_SIZE
+    if len(uids) % BATCH_SIZE != 0:
+        profiles = await get_profiles(api, uids[i:-1], limit)
+        add_profiles(profiles, i, UID_PATH)
+        update_log(len(uids)-1, LOG_PATH)
