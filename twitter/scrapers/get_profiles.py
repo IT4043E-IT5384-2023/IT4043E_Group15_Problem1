@@ -7,18 +7,22 @@ from .config import *
 async def get_profile(api:API, user_id:str, limit:int=20):
     try:
         user = await api.user_by_id(user_id)
+        user = user.dict()
     except:
         user = {}
     try:
         followers = await gather(api.followers(user_id, limit=limit))
+        followers = [follower.dict() for follower in followers]
     except:
         followers = []
     try:
         following = await gather(api.following(user_id, limit=limit))
+        following = [follow.dict() for follow in following]
     except:
         following = []
     try:
         tweets = await gather(api.user_tweets(user_id, limit=limit))
+        tweets = [tweet.dict() for tweet in tweets]
     except:
         tweets = []
 

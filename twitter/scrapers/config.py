@@ -5,4 +5,4 @@ N_TWEETS = 60
 UID_PATH = "output\\uids.json"
 PROFILE_PATH = "output\\profiles.json"
 LOG_PATH = "output\\log.json"
-BATCH_SIZE = 50
+BATCH_SIZE = 10
