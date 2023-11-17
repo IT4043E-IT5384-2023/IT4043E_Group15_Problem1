@@ -5,6 +5,7 @@
 ```
 pip install -r requirements.txt
 python scrape.py
+python post_process.py
 ```
 
 ## Data Structure
