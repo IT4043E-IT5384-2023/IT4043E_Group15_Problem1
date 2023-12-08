@@ -1,7 +1,8 @@
 import json
+from .config import *
 
-def main():
-    with open("output\\profiles.json", 'r') as f:
+def post_process():
+    with open(PROFILE_PATH, 'r') as f:
         profiles = json.load(f)
         
     cleaned = {}
@@ -32,11 +33,8 @@ def main():
                 if tweet_key != "user":
                     cleaned[user_id]['tweet'][i][tweet_key] = profiles[user_id]['tweet'][i][tweet_key]
                     
-    with open('output\\cleaned_profiles.json', 'w') as f:
+    with open(PROFILE_PATH, 'w') as f:
         json.dump(cleaned, f, indent=4, default=str)
 
-    with open('output\\follow.json', 'w') as f:
+    with open(FOLLOW_PATH, 'w') as f:
         json.dump(follow, f, indent=4, default=str)
-
-if __name__ == "__main__":
-    main()

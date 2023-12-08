@@ -7,6 +7,7 @@ import json
 from .config import *
 from .get_uids import get_uids_by_keywords as get_uids
 from .get_profiles import get_profiles as get_profiles
+from .post_process import post_process
 
 def load_uids(path:str=UID_PATH):
     with open(path, 'r') as f:
@@ -42,7 +43,8 @@ def main(
         keywords:str=KEYWORDS, 
         n_tweets:int=N_TWEETS, 
         limit:int=LIMIT,
-        do_load_uids:bool=False
+        load_uids:bool=False,
+        post_process:bool=True
     ):
     api = API(ACCOUNT_DB_PATH)  # or API("path-to.db") - default is `accounts.db`
 
@@ -50,7 +52,7 @@ def main(
     asyncio.run(api.pool.login_all())
 
     # Crawl UIDs
-    if do_load_uids:
+    if load_uids:
         uids = load_uids(UID_PATH)
     else:
         uids = asyncio.run(get_uids(api, keywords, n_tweets))
@@ -67,3 +69,7 @@ def main(
         profiles = asyncio.run(get_profiles(api, uids[i:-1], limit))
         add_profiles(profiles, i, PROFILE_PATH)
         update_log(len(uids), LOG_PATH)
+
+    # Post process
+    if post_process:
+        post_process()
