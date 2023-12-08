@@ -1,1 +1,4 @@
 twscrape
+transformers
+tweet-preprocessor
+torch
