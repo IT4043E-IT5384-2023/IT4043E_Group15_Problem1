@@ -1,4 +1,3 @@
-import asyncio
 from twitter.scrapers import main
 
 if __name__ == "__main__":

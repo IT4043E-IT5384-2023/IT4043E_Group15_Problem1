@@ -5,8 +5,8 @@ from typing import List, Dict
 import json
 
 from .config import *
-from .get_uids import run as get_uids
-from .get_profiles import run as get_profiles
+from .get_uids import get_uids_by_keywords as get_uids
+from .get_profiles import get_profiles as get_profiles
 
 def load_uids(path:str=UID_PATH):
     with open(path, 'r') as f:

@@ -33,7 +33,7 @@ async def get_profile(api:API, user_id:str, limit:int=20):
         tweet=tweets
     )
 
-async def run(api:API, users: List, limit:int=LIMIT):
+async def get_profiles(api:API, users: List, limit:int=LIMIT):
     # change log level, default info
     set_log_level("DEBUG")
 
