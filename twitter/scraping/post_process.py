@@ -1,5 +1,5 @@
 import json
-from .config import *
+from ..config import *
 
 def post_process():
     with open(PROFILE_PATH, 'r') as f:

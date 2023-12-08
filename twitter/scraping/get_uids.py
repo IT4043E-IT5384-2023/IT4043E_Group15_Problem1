@@ -1,7 +1,7 @@
 from twscrape import API, gather
 from twscrape.logger import set_log_level
 from typing import List
-from .config import *
+from ..config import *
 
 async def get_uids_by_keyword(api:API, keyword:str, limit:int=20):
     tweets = await gather(api.search(keyword, limit=limit)) 

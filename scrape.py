@@ -1,4 +1,4 @@
-from twitter.scrapers import main
+from twitter.scraping import scrape
 import argparse
 
 if __name__ == "__main__":
@@ -8,7 +8,7 @@ if __name__ == "__main__":
     
     args, _ = parser.parse_known_args()
 
-    main(
+    scrape(
         load_uids=args.load_uids, 
         post_process=args.post_process
     )

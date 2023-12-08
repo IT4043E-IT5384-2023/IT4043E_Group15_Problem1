@@ -2,7 +2,7 @@ from twscrape import API, gather
 from twscrape.logger import set_log_level
 from typing import List
 
-from .config import *
+from ..config import *
 
 async def get_profile(api:API, user_id:str, limit:int=20):
     try:

@@ -4,7 +4,7 @@ from twscrape.logger import set_log_level
 from typing import List, Dict
 import json
 
-from .config import *
+from ..config import *
 from .get_uids import get_uids_by_keywords as get_uids
 from .get_profiles import get_profiles as get_profiles
 from .post_process import post_process
@@ -39,7 +39,7 @@ def load_log(path:str=LOG_PATH):
         log = json.load(f)
     return int(log["cursor_idx"])
 
-def main(
+def scrape(
         keywords:str=KEYWORDS, 
         n_tweets:int=N_TWEETS, 
         limit:int=LIMIT,
