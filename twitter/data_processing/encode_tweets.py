@@ -22,7 +22,7 @@ def encode_tweet(rawContent, model, tokenizer):
     return outputs['last_hidden_state'][0][0].tolist()
 
 def encode_tweets():
-    with open('/kaggle/input/tempor/users_processed.json','r') as f:
+    with open(PROCESSED_PROFILE_PATH,'r') as f:
         user_data = json.load(f)
     keys = list(user_data.keys())
     
@@ -51,5 +51,5 @@ def encode_tweets():
                 new_tweet['textVec'] = encode_tweet(str(tweet['rawContent']), model, tokenizer)
                 processed_data['tweet'][str(i)].append(new_tweet)
 
-    with open(PROCESSED_PROFILE_PATH, 'w') as f:
+    with open(PROCESSED_ALL_PATH, 'w') as f:
         json.dump(processed_data, f, indent=4)

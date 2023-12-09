@@ -8,8 +8,10 @@ UID_PATH = "output\\uids.json"
 PROFILE_PATH = "output\\profiles.json"
 FOLLOW_PATH = 'output\\follows.json'
 LOG_PATH = "output\\log.json"
+LOCATION_PATH = "output\\location.json"
 
-PROCESSED_PROFILE_PATH = "output\\processed\\embeded_profiles.json"
+PROCESSED_PROFILE_PATH = "output\\processed\\temp_profiles.json"
+PROCESSED_ALL_PATH = "output\\processed\\profiles.json"
 
 LANG_DICT = {
     'ar': 'Arabic',
