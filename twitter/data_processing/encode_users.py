@@ -46,6 +46,7 @@ def encode_users():
     tweet = pd.DataFrame.from_records(tweet_list,index=index)
 
     # A dictionary to convert languages into country
+    '''
     lang = tweet['lang'].unique().tolist()
     lst = [
         'United States', 'Spain','Vietnam','France','China','Estonia', 'United States', 'Romania', 'United States', 'United Kingdom',
@@ -60,18 +61,21 @@ def encode_users():
     lang_dict['qct'] = "United States"
     lang_dict['no'] = "Norway"
     lang_dict['ur'] = "Pakistan"
+    '''
 
     with open(LOCATION_PATH) as json_file:
         location_dict = json.load(json_file)
 
     country =[]
     for i in range(user.shape[0]): 
-        if (user['location'][i] == '' or str(user['location'][i]) == 'nan' ):
-            country.append( lang_dict[tweet['lang'][i]])
+        if (user['location'][i] == '' or str(user['location'][i]) == 'nan'):
+            #country.append(lang_dict[tweet['lang'][i]])
+            country.append('None')
         else:
             country.append(location_dict[user['location'][i]].strip())
-    user['country']=country
+    user['country'] = country
 
+    '''
     tweet_list = []
     for i in users['tweet']:
         if len(i)<4:
@@ -79,10 +83,13 @@ def encode_users():
         else:  
             tweet_list.append(i[3])
     tweet = pd.DataFrame.from_records(tweet_list,index=index)
+    '''
 
+    '''
     for i in range(user.shape[0]): 
         if (user['country'][i] == 'Unknown' or user['country'][i] =='None' ):
             user.at[i,'country']=lang_dict[tweet['lang'][i]]
+    '''
     
     user['tweet'] = users['tweet']
 
