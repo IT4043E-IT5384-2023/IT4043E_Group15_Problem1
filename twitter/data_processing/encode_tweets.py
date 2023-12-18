@@ -15,9 +15,6 @@ def encode_tweet(rawContent, model, tokenizer):
         with torch.no_grad():
             outputs = model(**inputs)
     except:
-        #print(rawContent)
-        #print(cleaned_text)
-        #print('Next')
         return None
     return outputs['last_hidden_state'][0][0].tolist()
 

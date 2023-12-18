@@ -35,6 +35,7 @@ def encode_users():
     unnecessary = ['profileImageUrl','profileBannerUrl','descriptionLinks','_type','id_str','url','created']
     user.drop(columns=unnecessary, axis=1,inplace=True)
 
+    '''
     # Create a list of tweet coresponding to each user, take the first tweet by default, 
     # if there exist unavailable language, take the 2nd,3rd,... tweet until all languages are valid
     tweet_list = []
@@ -44,6 +45,7 @@ def encode_users():
         else:  
             tweet_list.append(i[0])
     tweet = pd.DataFrame.from_records(tweet_list,index=index)
+    '''
 
     # A dictionary to convert languages into country
     '''
