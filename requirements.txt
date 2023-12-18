@@ -2,3 +2,5 @@ twscrape
 transformers
 tweet-preprocessor
 torch
+geopy
+pandas
