@@ -1,5 +1,4 @@
 import pandas as pd
-from tqdm import tqdm
 import json
 from typing import List
 import pycountry_convert as pc

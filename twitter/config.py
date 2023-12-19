@@ -13,6 +13,10 @@ LOCATION_PATH = "output\\location.json"
 CLEAN_USER_PATH = "output\\cleaned\\users.csv"
 CLEAN_TWEET_PATH = "output\\cleaned\\tweets.csv"
 
+PROCESS_USER_PATH = "output\\processed\\users.csv"
+PROCESS_TWEET_PATH = "output\\processed\\tweets.csv"
+PROCESS_DATA_PATH = "output\\processed\\data.csv"
+
 MISSING_CN_TO_CNT = {
     "Kosovo": "Europe",
     "Palestinian Territories": "Asia",
