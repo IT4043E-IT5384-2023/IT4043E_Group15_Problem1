@@ -10,8 +10,16 @@ FOLLOW_PATH = 'output\\follows.json'
 LOG_PATH = "output\\log.json"
 LOCATION_PATH = "output\\location.json"
 
-PROCESSED_PROFILE_PATH = "output\\processed\\temp_profiles.json"
-PROCESSED_ALL_PATH = "output\\processed\\profiles.json"
+CLEAN_USER_PATH = "output\\cleaned\\users.csv"
+CLEAN_TWEET_PATH = "output\\cleaned\\tweets.csv"
+
+MISSING_CN_TO_CNT = {
+    "Kosovo": "Europe",
+    "Palestinian Territories": "Asia",
+    "North Pole": "Arctic",
+    "Ascension and Tristan da Cunha": "Africa",
+    "Gornja Siga": "Europe"
+}
 
 LANG_DICT = {
     'ar': 'Arabic',
