@@ -17,6 +17,8 @@ PROCESS_USER_PATH = "output\\processed\\users.csv"
 PROCESS_TWEET_PATH = "output\\processed\\tweets.csv"
 PROCESS_DATA_PATH = "output\\processed\\data.csv"
 
+MODEL_DIR = "output\\models"
+
 MISSING_CN_TO_CNT = {
     "Kosovo": "Europe",
     "Palestinian Territories": "Asia",
