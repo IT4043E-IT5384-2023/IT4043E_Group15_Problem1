@@ -26,7 +26,7 @@ def preprocess_data(dry_run: bool = True):
     df_processed = merge_data(df_user, df_tweet)
 
     if not dry_run:
-        df_processed.to_csv(PROCESS_DATA_PATH)
+        df_processed.to_csv(PROCESS_DATA_PATH, index=False)
         df_user.to_csv(PROCESS_USER_PATH, index=False)
         df_tweet.to_csv(PROCESS_TWEET_PATH, index=False)
 
