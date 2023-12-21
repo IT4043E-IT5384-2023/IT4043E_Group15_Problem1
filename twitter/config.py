@@ -18,6 +18,7 @@ PROCESS_TWEET_PATH = "output\\processed\\tweets.csv"
 PROCESS_DATA_PATH = "output\\processed\\data.csv"
 
 MODEL_DIR = "output\\models"
+RESULT_DIR = "output\\results\\infer.json"
 
 MISSING_CN_TO_CNT = {
     "Kosovo": "Europe",
@@ -27,59 +28,13 @@ MISSING_CN_TO_CNT = {
     "Gornja Siga": "Europe"
 }
 
-LANG_DICT = {
-    'ar': 'Arabic',
-    'art': 'emoji only',
-    'bn': "Bengali",
-    'ca': 'Catalan',
-    'cs': 'Czech',
-    'cy': 'Welsh',
-    'da': 'Danish',
-    'de': 'German',
-    'el': 'Greek',
-    'en': 'English',
-    'es': 'Spanish',
-    'et': 'Estonian',
-    'eu': 'Basque',
-    'fa': 'Farsi',
-    'fi': "Finnish",
-    'fr': 'French',
-    'he': 'Hebrew',
-    'hi': "Hindi",
-    'hu': 'Hungarian',
-    'ht': 'Haitian Creole',
-    'in': "Indonesian",
-    'it': "Italian",
-    'iw': "Hebrew",
-    'ja': "Japanese",
-    'ko': "Korean",
-    'lt':'Lithuanian',
-    'lv': 'Latvian',
-    'ml': 'Malayalam',
-    'msa': 'Malay',
-    'ne': 'Nepali',
-    'nl': 'Dutch',
-    'no': 'Norwegian',
-    'pl': 'Polish',
-    'ps': 'Pashto',
-    'pt': 'Portuguese',
-    'qam': 'tweets with mentions only',
-    'qct': 'tweets with cashtags only',
-    'qht': 'tweets with hashtags only',
-    'qme': 'for tweets with media links',
-    'qst': 'tweets with a very short text',
-    'ro': "Romanian",
-    'ru': "Russian",
-    'sl': 'Slovenian',
-    'sr': 'Serbian',
-    'sv': "Swedish",
-    'th': 'Thai',
-    'tl': 'Not language1',
-    'tr': 'Turkish',
-    'uk': 'Ukrainian',
-    'und': 'Not language2',
-    'ur': 'Urdu',
-    'vi': 'Vietnamese',
-    'zh': 'Chinese',
-    'zxx': 'tweets with either media or Twitter Card only, without any additional text'
+LABEL_MAP = {
+    'Africa': 0, 
+    'Antarctica': 1, 
+    'Asia': 2, 
+    'Europe': 3, 
+    'North America': 4,
+    'Oceania': 5, 
+    'South America': 6,
+    'Arctic': 7
 }

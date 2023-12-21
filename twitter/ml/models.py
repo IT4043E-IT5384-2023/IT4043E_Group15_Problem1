@@ -9,6 +9,12 @@ from sklearn.base import clone
 
 from ..config import MODEL_DIR
 
+def save_model(model, name):
+    joblib.dump(model, os.path.join(MODEL_DIR, name + ".pkl"))
+
+def load_model(name):
+    return joblib.load(os.path.join(MODEL_DIR, name + ".pkl"))
+
 class Model:
     def __init__(
         self,
@@ -34,12 +40,19 @@ class Model:
     ):
         self.model.fit(X, y)
 
+    def increment(
+        self,
+        X: np.ndarray,
+        y: np.ndarray
+    ):
+        pass
+
     def eval(
         self,
         X: np.ndarray,
         y: np.ndarray,
         scoring: str = "roc_auc_ovo"
-    ):
+    ) -> float:
         return cross_val_score(clone(self.model), X, y, 
                                scoring=scoring, cv=2, n_jobs=-1).mean()
     
