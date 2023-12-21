@@ -1,2 +1,2 @@
 from .models import Model
-from .infer import infer
+from .transforms import encode_data, load_data, interpret_label

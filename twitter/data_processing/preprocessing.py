@@ -5,9 +5,8 @@ def preprocess_users(
     df_user: pd.DataFrame,
     drop_cols: List = ["verified"],
 ) -> pd.DataFrame:
-    df_user = df_user[df_user["location"].notnull()]
     df_user = df_user.drop(columns=drop_cols, axis=1)
-    df_user["blue"] = df_user["blue"].astype("int64")
+    df_user = df_user.dropna(subset=df_user.columns.difference(["location"]))
     
     # for merging
     df_user.rename(columns={"id": "user_id"}, inplace=True)
@@ -28,8 +27,10 @@ def merge_data(
     df_tweet: pd.DataFrame,
     fill_none_tweet: int = 0,
     left_join_on_cols: List = ['user_id']
-):
+) -> pd.DataFrame:
     data = pd.merge(df_user, df_tweet, 
                     how='left', on=left_join_on_cols)
-    data.fillna(fill_none_tweet, inplace=True)
+    data[df_tweet.columns.difference(["user_id"])] \
+        = data[df_tweet.columns.difference(["user_id"])].fillna(fill_none_tweet, 
+                                                                inplace=True)
     return data

@@ -5,9 +5,9 @@ from typing import List, Dict
 import json
 
 from ..config import *
-from .get_uids import get_uids_by_keywords as get_uids
-from .get_profiles import get_profiles as get_profiles
-from .post_process import post_process
+from .uids import get_uids_by_keywords as get_uids
+from .profiles import get_profiles as get_profiles
+from .post_processing import post_process
 
 def load_uids(path:str=UID_PATH):
     with open(path, 'r') as f:
