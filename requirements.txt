@@ -4,3 +4,5 @@ tweet-preprocessor
 torch
 geopy
 pandas
+pycountry-convert
+pyspark
