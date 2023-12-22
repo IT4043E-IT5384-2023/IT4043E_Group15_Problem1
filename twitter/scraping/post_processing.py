@@ -38,3 +38,9 @@ def post_process():
 
     with open(FOLLOW_PATH, 'w') as f:
         json.dump(follow, f, indent=4, default=str)
+
+    # convert to JSONL for batch processing
+    with open(PROFILE_PATH + "l", 'w') as outfile:
+        for k, v in cleaned.items():
+            json.dump(v, outfile)
+            outfile.write('\n')
