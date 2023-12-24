@@ -1,95 +1,86 @@
-from .data_processing import clean_tweets, clean_users, load_profile
-from .data_processing import preprocess_users, preprocess_tweets, merge_data
-from .ml import Model, encode_data, load_data, interpret_label
-from .config import CLEAN_USER_PATH, CLEAN_TWEET_PATH, PROCESS_DATA_PATH, PROCESS_USER_PATH, PROCESS_TWEET_PATH
-from .config import PROFILE_PATH, RESULT_DIR
+from pyspark.sql import SparkSession, DataFrame
+from typing import List, Optional
+import os
+from .config import GG_LUCKY_PATH, SPARK_MASTER, HADOOP_CONNECTOR_PATH, ELASTIC_MASTER, ELASTIC_HTTP_AUTH, \
+                    MODEL_CKPT, ROOT, PROFILE_PATH
+RAW_DATA_PATH = os.path.join(ROOT, PROFILE_PATH + "l")
 
-from typing import List, Dict, Union, Tuple
-import pandas as pd
-import numpy as np
-import json
+from .tasks import UserClassification
+from .processing import DataCleaner, DataPreprocessor
+from .scraping import scrape
 
-def _clean_pipe(
-    profiles: Union[str, pd.DataFrame] = PROFILE_PATH,
-    memory_to_disk: bool = False
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    if isinstance(profiles ,str):
-        profiles = load_profile(profiles)
+from elasticsearch import Elasticsearch
+from elasticsearch import helpers
+
+class Pipeline:
+    def __init__(self):
+        self.spark = self.connect_spark()
+        self.es = self.connect_elastic()
     
-    df_user = clean_users(profiles)
-    df_tweet = clean_tweets(profiles)
+    @staticmethod
+    def connect_spark():
+        #config the connector jar file
+        spark = (SparkSession.builder.appName("SimpleSparkJob").master(SPARK_MASTER)
+                .config("spark.jars", HADOOP_CONNECTOR_PATH)
+                .config("spark.executor.memory", "1G")  #excutor excute only 2G
+                .config("spark.driver.memory","1G") 
+                .config("spark.executor.cores","1") # Cluster use only 3 cores to excute as it has 3 server
+                .config("spark.python.worker.memory","1G") # each worker use 1G to excute
+                .config("spark.driver.maxResultSize","1G") #Maximum size of result is 3G
+                .config("spark.kryoserializer.buffer.max","1024M")
+                .getOrCreate())
+        
+        # version migration
+        spark.conf.set("spark.sql.legacy.timeParserPolicy","LEGACY")
 
-    if memory_to_disk:
-        df_user.to_csv(CLEAN_USER_PATH, index=False)
-        df_tweet.to_csv(CLEAN_TWEET_PATH, index=False)
+        #config the credential to identify the google cloud hadoop file 
+        spark.conf.set("google.cloud.auth.service.account.json.keyfile", GG_LUCKY_PATH)
+        spark._jsc.hadoopConfiguration().set('fs.gs.impl', 'com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem')
+        spark._jsc.hadoopConfiguration().set('fs.gs.auth.service.account.enable', 'true')
+
+        return spark
+
+    @staticmethod
+    def connect_elastic():
+        es = Elasticsearch([ELASTIC_MASTER], 
+                           http_auth=(ELASTIC_HTTP_AUTH["id"], 
+                                      ELASTIC_HTTP_AUTH["password"]))
+        return es
+        
+
+class TwitterPipeline(Pipeline):
+    def __init__(
+        self,
+        raw_data: Optional[str] = RAW_DATA_PATH,
+        model: Optional[str] = MODEL_CKPT,
+        task_neglect_cols: List = ['profileImageUrl','profileBannerUrl','descriptionLinks','_type', 'verified',
+                                    'id_str','url','created', 'rawDescription', 'protected', 'blueType', 'displayname', 'country'],
+    ):
+        super().__init__(self)
+
+        self.cleaner = DataCleaner(raw_data)
+        self.preprocessor = DataPreprocessor()
+        self.task = UserClassification(model, task_neglect_cols)
+
+    @staticmethod
+    def scrape_data(load_uids: bool = True):
+        scrape(load_uids = load_uids)
     
-    return df_user, df_tweet
+    def run(self, report_name: str = "group15-spark-ml"):
+        user_df, tweet_df = self.cleaner()
+        task_df = self.preprocessor(tweet_df, user_df)
+        report_df = self.task.model_infer(task_df)
 
-def _preprocess_pipe(
-    df_user: Union[str, pd.DataFrame] = CLEAN_USER_PATH,
-    df_tweet: Union[str, pd.DataFrame] = CLEAN_TWEET_PATH,
-    memory_to_disk: bool = False
-) -> pd.DataFrame:
-    if isinstance(df_user ,str):
-        df_user = load_profile(df_user)
-    if isinstance(df_tweet ,str):
-        df_tweet = load_profile(df_tweet)
-    
-    df_tweet = preprocess_tweets(df_tweet)
-    df_user = preprocess_users(df_user)
-    data = merge_data(df_user, df_tweet)
+        self.report(report_df, report_name)
 
-    if memory_to_disk:
-        data.to_csv(PROCESS_DATA_PATH, index=False)
-        df_user.to_csv(PROCESS_USER_PATH, index=False)
-        df_tweet.to_csv(PROCESS_TWEET_PATH, index=False)
-
-    return data
-
-def _transform_pipe(
-    data: Union[pd.DataFrame, str] = PROCESS_DATA_PATH,
-    eval_only: bool = True
-):
-    Xl, yl, Xu, yu = load_data(data)
-
-    if len(Xl) > 0 and not eval_only:
-        Xl, yl = encode_data(Xl, yl)
-
-    if len(Xu) > 0:
-        Xu, yu = encode_data(Xu, yu)
-
-    return Xl, yl, Xu, yu
-
-def assembly_pipe(
-    model: Model = Model(),
-    twitter_data: str = PROFILE_PATH,
-    memory_to_disk: bool = False,
-    infer_only: bool = True,
-    scoring: str = "roc_auc_ovo"      
-) -> Dict:
-    df_user, df_tweet = _clean_pipe(twitter_data, memory_to_disk)
-    data = _preprocess_pipe(df_user, df_tweet, memory_to_disk)
-    Xl, yl, Xu, _ = _transform_pipe(data, infer_only)
-
-    log = {}
-
-    if not infer_only:
-        model.train(Xl, yl)
-        score = model.eval(Xl, yl, scoring=scoring)
-        log["eval"] = {
-            "score": score,
-            "type": scoring
-        }
-
-    yu_pred = model.infer(Xu)
-    log["inference"] = {
-        "user_id": data["user_id"].tolist(),
-        "user_name": data["username"].tolist(),
-        "label": interpret_label(yu_pred).tolist()
-    }
-
-    with open(RESULT_DIR, "w") as f:
-        json.dump(log, f, indent=4)
-
-    return log
-
+    def report(self, df: DataFrame, index_name):
+        actions = []
+        for row in df.rdd.toLocalIterator():
+            action = {
+                "_index": index_name,
+                "_source": {
+                    col: row[col] for col in df.columns
+                }
+            }
+            actions.append(action)
+        helpers.bulk(self.es, actions)
