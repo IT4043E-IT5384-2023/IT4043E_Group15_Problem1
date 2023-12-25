@@ -1,8 +1,8 @@
 twscrape
-transformers
 tweet-preprocessor
 torch
 geopy
 pandas
 pycountry-convert
 pyspark
+elasticsearch
