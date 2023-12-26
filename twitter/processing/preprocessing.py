@@ -5,9 +5,12 @@ import pyspark.sql.functions as F
 
 class DataPreprocessor:
     def __init__(
-        self
+        self,
+        neglect_cols: List,
+        join_cols: List,
     ):
-        pass
+        self.neglect_cols = neglect_cols
+        self.join_cols = join_cols
 
     def __call__(
         self,
@@ -23,10 +26,9 @@ class DataPreprocessor:
     def preprocess_tweets(
         self,
         tweet_df: DataFrame,
-        join_cols: List
     ) -> DataFrame:
         # drop unecessary fields for ML tasks
-        tweet_df = tweet_df.select(*join_cols)
+        tweet_df = tweet_df.select(*self.join_cols)
         
         # drop any-NULL rows
         tweet_df = tweet_df.na.drop()
@@ -46,10 +48,9 @@ class DataPreprocessor:
     def preprocess_users(
         self,
         user_df: DataFrame,
-        neglect_cols: List
     ) -> DataFrame:
         # drop rows with NaN values in columns other than "location"
-        process_cols = [col_name for col_name in user_df.columns if col_name not in (["location"] + neglect_cols)]
+        process_cols = [col_name for col_name in user_df.columns if col_name not in (["location"] + self.neglect_cols)]
         user_df = user_df.na.drop(subset=process_cols)
         
         return user_df

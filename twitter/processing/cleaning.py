@@ -12,10 +12,11 @@ from .utils import country_to_continent
 class DataCleaner:
     def __init__(
         self,
+        spark,
         data: Union[str, DataFrame],
     ):
         if isinstance(data, str):
-            data = self.load_raw_data(data)
+            data = self.load_raw_data(spark, data)
         self.data = data
     
     @staticmethod
@@ -62,7 +63,7 @@ class DataCleaner:
 
     def clean_users(self) -> DataFrame:
         # extract users from crawled data
-        user_df = self._extract_users(self.data)
+        user_df = self._extract_users()
         
         # consistent & unique
         user_df = user_df \
@@ -89,7 +90,7 @@ class DataCleaner:
     
     def clean_tweets(self) -> DataFrame:
         # extract tweets from crawled data
-        tweet_df = self._extract_tweets(self.data) # <-- id -> user_id here
+        tweet_df = self._extract_tweets() # <-- id -> user_id here
         
         # consistent & duplicate
         tweet_df = tweet_df.dropDuplicates(["id"])

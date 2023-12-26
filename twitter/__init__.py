@@ -1,1 +1,1 @@
-from .pipelines import assembly_pipe
+from .pipelines import TwitterPipeline

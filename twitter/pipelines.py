@@ -55,18 +55,20 @@ class TwitterPipeline(Pipeline):
         model: Optional[str] = MODEL_CKPT,
         task_neglect_cols: List = ['profileImageUrl','profileBannerUrl','descriptionLinks','_type', 'verified',
                                     'id_str','url','created', 'rawDescription', 'protected', 'blueType', 'displayname', 'country'],
+        tweet_join_cols: List = ["user_id", "replyCount", "retweetCount", 
+                                 "likeCount", "quoteCount", "viewCount", "lang"]
     ):
-        super().__init__(self)
+        super().__init__()
 
-        self.cleaner = DataCleaner(raw_data)
-        self.preprocessor = DataPreprocessor()
+        self.cleaner = DataCleaner(self.spark, raw_data)
+        self.preprocessor = DataPreprocessor(task_neglect_cols, tweet_join_cols)
         self.task = UserClassification(model, task_neglect_cols)
 
     @staticmethod
     def scrape_data(load_uids: bool = True):
         scrape(load_uids = load_uids)
     
-    def run(self, report_name: str = "group15-spark-ml"):
+    def run(self, report_name: str = "group15-spark-ml-experimental"):
         user_df, tweet_df = self.cleaner()
         task_df = self.preprocessor(tweet_df, user_df)
         report_df = self.task.model_infer(task_df)

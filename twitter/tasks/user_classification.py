@@ -133,7 +133,7 @@ class UserClassification:
         
         show_df = data \
                     .withColumn("prediction", inv_label_map[F.col("prediction")]) \
-                    .select(show_col, "prediction") \
+                    .select(*show_col, "prediction") \
                     .drop("location") \
                     .withColumnRenamed("prediction", "location") \
                     .withColumn("blue", F.when(F.col("blue") == 1, True).otherwise(False))
